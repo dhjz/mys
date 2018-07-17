@@ -3,12 +3,12 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace:命名空间,做sql隔离 -->
-<mapper namespace="user">
-	<select id="findById" parameterType="long" resultType="User">
+<mapper namespace="com.dhj.mapper.UserMapper">
+	<select id="findById" parameterType="long" resultType="com.dhj.domain.User">
 		select * from user where user_id = #{id}
 	</select>
 	
-	<insert id="insertUser" parameterType="user">
+	<insert id="save" parameterType="com.dhj.domain.User">
 		INSERT INTO `user` ( `user_code`, `user_name`, `user_password`, `user_state`) VALUES (#{user_code}, #{user_name}, #{user_password}, #{user_state})
 	</insert>
 	

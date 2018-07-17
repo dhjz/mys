@@ -4,7 +4,11 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<properties resource="db.properties"></properties>
-	
+	<typeAliases>
+		<!-- <typeAlias type="com.dhj.domain.User" alias="user"/> -->
+		<!-- 别名包扫描，不区分大小写 -->
+		<package name="com.dhj.domain"/>
+	</typeAliases>
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC"></transactionManager>
@@ -18,5 +22,8 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	</environments>
 	<mappers>
 		<mapper resource="User.xml"/>
+		<!--<mapper resource="UserMapper.xml"/> -->
+		<!-- 映射包扫描器：1、接口和xml文件名一致 2、同一目录下 -->
+		<package name="com.dhj.mapper"/>
 	</mappers>
 </configuration>
