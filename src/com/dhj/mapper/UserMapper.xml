@@ -4,6 +4,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- namespace:命名空间,做sql隔离 -->
 <mapper namespace="com.dhj.mapper.UserMapper">
+	<sql id="user_x">
+		<!-- u.user_id uId, -->
+		u.user_id,
+		u.user_code,
+		u.user_name,
+		u.user_password,
+		u.user_state
+	</sql>
+	<sql id="visit_x">
+		v.visit_id,
+		v.visit_cust_id,
+		v.visit_user_id,
+		v.visit_time,
+		v.visit_addr,
+		v.visit_detail,
+		v.visit_nexttime
+	</sql>
+	<sql id="where_user">
+		<where>
+			<if test="user_name != null and user_name != ''">
+				and user_name like '%${user_name}%' 
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and user_id = #{user_id}
+			</if>
+		</where>
+	</sql>
 	<select id="findById" parameterType="long" resultType="com.dhj.domain.User">
 		select * from user where user_id = #{id}
 	</select>
@@ -12,5 +39,73 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO `user` ( `user_code`, `user_name`, `user_password`, `user_state`) VALUES (#{user_code}, #{user_name}, #{user_password}, #{user_state})
 	</insert>
 	
+	<select id="findByIdQueryVo" parameterType="queryvo" resultType="user">
+		select * from user where user_name like '%${user.user_name}%'
+	</select>
+	<resultMap type="user" id="userResultMap">
+		<id property="user_id" column="user_id"/>
+		<result property="user_code" column="user_code"/>
+		<result property="user_name" column="user_name"/>
+		<result property="user_password" column="user_password"/>
+		<result property="user_state" column="user_state"/>
+	</resultMap>
+	<select id="findByName" parameterType="user" resultMap="userResultMap">
+		SELECT
+			<include refid="user_x"></include>
+		FROM
+			`user` u 
+		<include refid="where_user"></include>
+		
+	</select>
+	<!-- 一对一查询resultMap -->
+	<resultMap type="visit" id="visitAndUserResulyMap">
+		<id property="visit_id" column="visit_id"/>
+		<result property="visit_time" column="visit_time"/>
+		<result property="visit_addr" column="visit_addr"/>
+		<result property="visit_detail" column="visit_detail"/>
+		<result property="visit_nexttime" column="visit_nexttime"/>
+
+		<association property="user" javaType="user">
+			<id property="user_id" column="user_id"/>
+			<result property="user_code" column="user_code"/>
+			<result property="user_name" column="user_name"/>
+			<result property="user_password" column="user_password"/>
+			<result property="user_state" column="user_state"/>
+		</association>	
+	</resultMap>
+	<!-- 一对一查询 -->
+	<select id="findVisitAndUser" resultMap="visitAndUserResulyMap">
+		SELECT
+			<include refid="visit_x"></include>,
+			<include refid="user_x"></include>
+		FROM
+			sale_visit v
+		left join user u on v.visit_user_id = u.user_id
+	</select>
+	<!-- 一对多resultMap -->
+	<resultMap type="user" id="userAndVisitResultMap">
+		<id property="user_id" column="user_id"/>
+		<result property="user_code" column="user_code"/>
+		<result property="user_name" column="user_name"/>
+		<result property="user_password" column="user_password"/>
+		<result property="user_state" column="user_state"/>
+		<!-- ofType List集合的泛型类型 -->
+		<collection property="visits" ofType="visit">
+			<id property="visit_id" column="visit_id"/>
+			<result property="visit_time" column="visit_time"/>
+			<result property="visit_addr" column="visit_addr"/>
+			<result property="visit_detail" column="visit_detail"/>
+			<result property="visit_nexttime" column="visit_nexttime"/>
+		</collection>
+	</resultMap>
+	<!-- 一对多 查询-->
+	<select id="findUserAndVisit" resultMap="userAndVisitResultMap">
+		SELECT
+			<include refid="visit_x"></include>,
+			<include refid="user_x"></include>
+		FROM
+			user u
+		left join sale_visit v on u.user_id = v.visit_user_id
+	</select>
 	
 </mapper>

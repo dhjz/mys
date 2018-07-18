@@ -1,5 +1,7 @@
 package com.dhj.domain;
 
+import java.util.List;
+
 public class User {
 	/**
 	 *  `user_id` bigint(32) NOT NULL AUTO_INCREMENT COMMENT '用户id',
@@ -13,6 +15,14 @@ public class User {
 	private String user_name;
 	private String user_password;
 	private String user_state;
+	
+	private List<Visit> visits;
+	public List<Visit> getVisits() {
+		return visits;
+	}
+	public void setVisits(List<Visit> visits) {
+		this.visits = visits;
+	}
 	public Long getUser_id() {
 		return user_id;
 	}
@@ -42,6 +52,11 @@ public class User {
 	}
 	public void setUser_state(String user_state) {
 		this.user_state = user_state;
+	}
+	@Override
+	public String toString() {
+		return "User [user_id=" + user_id + ", user_code=" + user_code + ", user_name=" + user_name + ", user_password="
+				+ user_password + ", user_state=" + user_state + ", visits=" + visits + "]";
 	}
 
 }
